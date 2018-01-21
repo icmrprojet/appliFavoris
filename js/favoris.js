@@ -37,14 +37,14 @@ function chargerFavoris() {
 	data = pullLocalStorageInto();
 	var index=0;
     //daily
-    var lignesFavoris = '<div class="ligne" name="daily" ondrop="drop(event)" ondragover="allowDrop(event)">';
+    var lignesFavoris = '<div class="ligne" name="daily" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Daily</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
     data.daily.forEach(function (element) {
 		index++;
         lignesFavoris += printElement(element, day, index);
         });
     lignesFavoris += '<button class="test pave" name="daily">+</button></div>'; 
     //weekly
-    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)">';
+    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco modifButton"></span><span class="supprIco"></span></div>';
 	index = 0;
 	data.weekly.forEach(function (element) {
 		index++;
@@ -52,7 +52,7 @@ function chargerFavoris() {
         });
 	lignesFavoris += '<button class="test pave" name="weekly">+</button></div>';
     //monthly
-    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)">';
+    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco modifButton"></span><span class="supprIco"></span></div>';
 	index = 0;
 	data.monthly.forEach(function (element) {
 		index++;
@@ -79,8 +79,10 @@ function liaisonOnClicks(){
         $('input[name=urlImage]').val("");
         $('input[name=siteName]').val("");
         $('input[name=siteUrl]').val("");
-		$('.modifButton').css("color", "black");
+        $('.modifButton').css("color", "red");
+        $('span.modif').addClass("show");
 		$('.supprButton').css("color", "black");
+        $('span.suppr').removeClass("show");
     })
 
     // CLICK sur un FAVORIS
@@ -106,6 +108,7 @@ function liaisonOnClicks(){
                 $("#ajouterFavForm").hide();
                 action=null;
                 $('.modifButton').css("color", "black");
+                $('span.modif').removeClass("show");
 
             }
         }
@@ -117,6 +120,7 @@ function liaisonOnClicks(){
         else
         {
             data[ligne][index].lastVisitDate=Date.now();
+            $('.supprButton').css("display", "block");  
             saveLocalStorage(data);
 			chargerFavoris();
         }
@@ -125,6 +129,7 @@ function liaisonOnClicks(){
 
 }
 
+
 // HTML GENERE DEPUIS LE JS
 function printElement(element, date, order) {
     var favoris ='<div class="pave fav ';
@@ -132,8 +137,8 @@ function printElement(element, date, order) {
     {
         favoris += 'coche';
     }
-	//var testImg = "https://c1.staticflickr.com/7/6107/6381966401_032df5fe1e_b.jpg"; // => remplace element.urlImage
-    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'>'/*<a href="' + element.siteUrl + '">*/+'<span><img src="' + element.urlImage + '" /></span><span> ' + element.siteName + '</span></a></div>';
+    var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
+    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="blank" href="' + element.urlImage + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
 }
 
 // ENREGISTREMENT EN LOCAL STORAGE
@@ -168,13 +173,6 @@ function ajouterFavoris() {
     chargerFavoris();
 }
 
-function droppedFavoris(ligne, urlImage,siteName){
-	var newFavoris = new Favoris(urlImage,siteName,"",0); // 
-    data[ligne].push(newFavoris); // push du nouveau favori dans le tableau ligne
-	saveLocalStorage(data);
-    chargerFavoris();
-	
-}
 
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
@@ -196,34 +194,11 @@ function modifierFavoris(ligne, index) {
     chargerFavoris();
 }
 
-function allowDrop(ev) {
-    ev.preventDefault();
-    console.log("dropped");
-}
 
-function drag(ev) {
-    ev.dataTransfer.setData("urlImage", ev.target.getElementsByTagName("img")[0].attributes.src.nodeValue);
-	ev.dataTransfer.setData("siteName", ev.target.getElementsByTagName("span")[1].innerHTML);
-	ev.dataTransfer.setData("index", ev.target.getAttribute("name"));
-	ev.dataTransfer.setData("ligneSrc", ev.target.parentElement.getAttribute("name"));
-	//ev.dataTransfer.setData("siteUrl", ev.target.getElementsByTagName("a")[0].attributes.src.nodeValue);
-}
-function drop(ev) {
-    ev.preventDefault();
-	var urlImage = ev.dataTransfer.getData("urlImage");
-	var siteName = ev.dataTransfer.getData("siteName");
-	var index = ev.dataTransfer.getData("index");
-	var ligneSrc = ev.dataTransfer.getData("ligneSrc");
-	if(ev.target.className == "ligne")
-	{
-		var ligne = ev.target.getAttribute("name");
-		droppedFavoris(ligne, urlImage, siteName);
-		supprimerFavoris(ligneSrc, index-1);
-		
-	}
 	
 	
-}
+
+
 $(document).ready(function () {
 	$("#ajouterFavForm").hide();
     chargerFavoris();
@@ -244,20 +219,23 @@ $(document).ready(function () {
         }
         $("#ajouterFavForm").hide();
     });
-	
+
     // cta MODIFIER
-    $('.modifButton').on('click', function (event) 
+    $('.modifButton').on('click', function (event,ligne) 
     {
-		$("#ajouterFavForm").hide();
+        $("#ajouterFavForm").hide();
         if(action == "Modifier")
         {
             action = null;
+            $('span.modif').removeClass("show");
             $('.modifButton').css("color", "black");
         }
         else 
         {
             action = "Modifier";
+            $('span.modif').addClass("show");
             $('.modifButton').css("color", "red");
+            $('span.suppr').removeClass("show");
             $('.supprButton').css("color", "black");
         }
 
@@ -270,16 +248,59 @@ $(document).ready(function () {
         if(action == "Supprimer")
         {
             action = null;
+            $('span.suppr').removeClass("show");
             $('.supprButton').css("color", "black");
         }
         else 
         {
             action = "Supprimer";
+            $('span.suppr').addClass("show");
             $('.supprButton').css("color", "red");
+            $('span.modif').removeClass("show");
             $('.modifButton').css("color", "black");
         }
     });
+
+});// fin document ready
+
+
+
+
+
+// DRAG AND DROP ***********************************************
+function allowDrop(ev) {
+    ev.preventDefault();
+    console.log("dropped");
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("urlImage", ev.target.getElementsByTagName("img")[0].attributes.src.nodeValue);
+    ev.dataTransfer.setData("siteName", ev.target.getElementsByTagName("span")[1].innerHTML);
+    ev.dataTransfer.setData("index", ev.target.getAttribute("name"));
+    ev.dataTransfer.setData("ligneSrc", ev.target.parentElement.getAttribute("name"));
+    //ev.dataTransfer.setData("siteUrl", ev.target.getElementsByTagName("a")[0].attributes.src.nodeValue);
+}
+
+function droppedFavoris(ligne, urlImage,siteName){
+    var newFavoris = new Favoris(urlImage,siteName,"",0); // 
+    data[ligne].push(newFavoris); // push du nouveau favori dans le tableau ligne
+    saveLocalStorage(data);
+    chargerFavoris();
     
+}
 
-});
-
+function drop(ev) {
+    ev.preventDefault();
+    var urlImage = ev.dataTransfer.getData("urlImage");
+    var siteName = ev.dataTransfer.getData("siteName");
+    var index = ev.dataTransfer.getData("index");
+    var ligneSrc = ev.dataTransfer.getData("ligneSrc");
+    if(ev.target.className == "ligne")
+    {
+        var ligne = ev.target.getAttribute("name");
+        droppedFavoris(ligne, urlImage, siteName);
+        supprimerFavoris(ligneSrc, index-1);
+        
+    }
+}
+// DRAG AND DROP ***********************************************
