@@ -1,3 +1,3 @@
 # appliFavoris
-
-Création d'une application de mise en favoris de page WEB avec suivi quotidien, hebdomadaire, mensuel et autre des lecture effectuées.
+CHALLENGE 6
+Création d'une application de gestion de favoris WEB avec suivi quotidien, hebdomadaire, mensuel et autre des lectures effectuées.
