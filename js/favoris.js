@@ -221,7 +221,7 @@ $(document).ready(function () {
     });
 
     // cta MODIFIER
-    $('.modifButton').on('click', function (event,ligne) 
+    $('.modifButton').on('click', function (event) 
     {
         $("#ajouterFavForm").hide();
         if(action == "Modifier")
