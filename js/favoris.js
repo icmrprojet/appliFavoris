@@ -44,7 +44,7 @@ function chargerFavoris() {
         });
     lignesFavoris += '<button class="test pave" name="daily">+</button></div>'; 
     //weekly
-    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco modifButton"></span><span class="supprIco"></span></div>';
+    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
 	index = 0;
 	data.weekly.forEach(function (element) {
 		index++;
@@ -52,7 +52,7 @@ function chargerFavoris() {
         });
 	lignesFavoris += '<button class="test pave" name="weekly">+</button></div>';
     //monthly
-    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco modifButton"></span><span class="supprIco"></span></div>';
+    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
 	index = 0;
 	data.monthly.forEach(function (element) {
 		index++;
