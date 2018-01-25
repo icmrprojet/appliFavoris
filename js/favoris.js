@@ -11,13 +11,9 @@ var data2 = {
             siteName: "Yahoo",
             siteUrl: "http://yahoo.fr"        
     ],
-    weekly: [
-
-    ],
-    monthly: [
-
-    ]
-};
+    weekly: [],
+    monthly: []
+    };
 }*/
 var action = null;
 //Constructeur pour l'objet Favoris
@@ -79,9 +75,7 @@ function liaisonOnClicks(){
         $('input[name=urlImage]').val("");
         $('input[name=siteName]').val("");
         $('input[name=siteUrl]').val("");
-        $('.modifButton').css("color", "red");
-        $('span.modif').addClass("show");
-		$('.supprButton').css("color", "black");
+        $('span.modif').removeClass("show");
         $('span.suppr').removeClass("show");
     })
 
@@ -107,8 +101,8 @@ function liaisonOnClicks(){
             {
                 $("#ajouterFavForm").hide();
                 action=null;
-                $('.modifButton').css("color", "black");
                 $('span.modif').removeClass("show");
+                $('span.suppr').removeClass("show");
 
             }
         }
@@ -124,9 +118,7 @@ function liaisonOnClicks(){
             saveLocalStorage(data);
 			chargerFavoris();
         }
-
     });
-
 }
 
 
@@ -145,7 +137,6 @@ function printElement(element, date, order) {
 function saveLocalStorage(data){
 	localStorage.setItem('data',JSON.stringify(data));
 }
-
 
 // CHECK DU LOCAL STORAGE sur la string 'data'
 function pullLocalStorageInto(){
@@ -172,7 +163,6 @@ function ajouterFavoris() {
 	saveLocalStorage(data);
     chargerFavoris();
 }
-
 
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
@@ -224,19 +214,19 @@ $(document).ready(function () {
     $('.modifButton').on('click', function (event) 
     {
         $("#ajouterFavForm").hide();
+        $(".modifIco")[0].parentNode.parentNode.getAttribute("name");
+        line= this.parentNode.parentNode.getAttribute("name");
+        console.log('l='+line);
         if(action == "Modifier")
         {
             action = null;
-            $('span.modif').removeClass("show");
-            $('.modifButton').css("color", "black");
+            $('div[name='+line+'] span.modif').removeClass("show");
         }
         else 
         {
             action = "Modifier";
-            $('span.modif').addClass("show");
-            $('.modifButton').css("color", "red");
-            $('span.suppr').removeClass("show");
-            $('.supprButton').css("color", "black");
+            $('div[name='+line+'] span.modif').addClass("show");
+            $('div[name='+line+'] span.suppr').removeClass("show");
         }
 
     });
@@ -245,19 +235,20 @@ $(document).ready(function () {
     $('.supprButton').on('click', function (event) 
     {
         $("#ajouterFavForm").hide();
+        $(".supprIco")[0].parentNode.parentNode.getAttribute("name");
+        line= this.parentNode.parentNode.getAttribute("name");
+        console.log('l='+line);
         if(action == "Supprimer")
         {
             action = null;
-            $('span.suppr').removeClass("show");
-            $('.supprButton').css("color", "black");
+            $('div[name='+line+'] span.suppr').removeClass("show");
         }
         else 
         {
             action = "Supprimer";
-            $('span.suppr').addClass("show");
-            $('.supprButton').css("color", "red");
-            $('span.modif').removeClass("show");
-            $('.modifButton').css("color", "black");
+            $('div[name='+line+'] span.suppr').addClass("show");
+            $('div[name='+line+'] span.modif').removeClass("show");
+           
         }
     });
 
