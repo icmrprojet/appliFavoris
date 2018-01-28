@@ -32,15 +32,16 @@ function chargerFavoris() {
     var month = day*30;
 	data = pullLocalStorageInto();
 	var index=0;
+    console.log("actioncharger?=" + action);
     //daily
-    var lignesFavoris = '<div class="ligne" name="daily" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Daily</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
+    var lignesFavoris = '<div class="ligne" name="daily" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Daily</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
     data.daily.forEach(function (element) {
 		index++;
         lignesFavoris += printElement(element, day, index);
         });
     lignesFavoris += '<button class="test pave" name="daily">+</button></div>'; 
     //weekly
-    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
+    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
 	index = 0;
 	data.weekly.forEach(function (element) {
 		index++;
@@ -48,7 +49,7 @@ function chargerFavoris() {
         });
 	lignesFavoris += '<button class="test pave" name="weekly">+</button></div>';
     //monthly
-    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco modifButton"></span><span class="supprIco supprButton"></span></div>';
+    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
 	index = 0;
 	data.monthly.forEach(function (element) {
 		index++;
@@ -57,8 +58,17 @@ function chargerFavoris() {
     lignesFavoris += '<button class="test pave" name="monthly">+</button></div>';
     $("#affichage").html(lignesFavoris);
     liaisonOnClicks();
+}
 
-
+// PRINT DU DOM
+function printElement(element, date, order) {
+    var favoris ='<div class="pave fav ';
+    if((Date.now()-element.lastVisitDate-date)<0)
+    {
+        favoris += 'coche';
+    }
+    var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
+    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="blank" href="' + element.urlImage + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
 }
 
 // ON CLICK
@@ -68,7 +78,9 @@ function liaisonOnClicks(){
     // CLICK sur AJOUTER
     $(".test").on("click",function(){
         $("#ligneFavName").attr("name",this.name);
+        console.log("action.test?=" + action);
         action = "Ajouter";
+        console.log("action.test1=" + action);
         $("#formSubmit")[0].setAttribute("value",action);
         $("#ajouterFavForm").toggle();
         // vider les champs du formulaire
@@ -83,7 +95,8 @@ function liaisonOnClicks(){
     $('.fav').on('click', function (elem) { 
         var ligne =  this.parentElement.getAttribute("name");
         var index = this.getAttribute("name")-1;
-		console.log(ligne, index);	
+		console.log(ligne, index);
+        console.log("action.fav=" + action);	
         if(action == "Modifier") 
         {
 
@@ -121,18 +134,6 @@ function liaisonOnClicks(){
     });
 }
 
-
-// HTML GENERE DEPUIS LE JS
-function printElement(element, date, order) {
-    var favoris ='<div class="pave fav ';
-    if((Date.now()-element.lastVisitDate-date)<0)
-    {
-        favoris += 'coche';
-    }
-    var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
-    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="blank" href="' + element.urlImage + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
-}
-
 // ENREGISTREMENT EN LOCAL STORAGE
 function saveLocalStorage(data){
 	localStorage.setItem('data',JSON.stringify(data));
@@ -153,19 +154,21 @@ function pullLocalStorageInto(){
 
 // AJOUTER FAVORIS
 function ajouterFavoris() {
+    console.log("action.ajouterfav?=" + action);
 	var ligne = $("#ligneFavName").attr("name"); //Récupération du DOM depuis les champs du formulaire
 	var urlImage = $('input[name=urlImage]').val();
     var siteName = $('input[name=siteName]').val();
     var siteUrl  = $('input[name=siteUrl]').val();	
 	var newFavoris = new Favoris(urlImage,siteName,siteUrl,0); // 
 	//data[<variable>] = récupération du tableau "<variable>" dans data = liste de tableaux
-    data[ligne].push(newFavoris); // push du nouveau favori dans le tableau ligne
+    data[ligne].push(newFavoris); // push du nouveau favoris dans le tableau ligne
 	saveLocalStorage(data);
     chargerFavoris();
 }
 
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
+    action = null;
     console.log(ligne,index)
     data[ligne].splice(index,1);
     saveLocalStorage(data);
@@ -184,71 +187,77 @@ function modifierFavoris(ligne, index) {
     chargerFavoris();
 }
 
-
-	
-	
-
-
 $(document).ready(function () {
 	$("#ajouterFavForm").hide();
     chargerFavoris();
-
 	// MISE EN PLACE des evenements de click sur les elements du DOM présents dans le fichier HTML
     
     // cta AJOUTER ou autre possiblité MODIFIER
     $('#formSubmit').on('click', function (event)   
     {
         event.preventDefault();
+        console.log("action.Submit?=" + action);
         if(action == "Ajouter")
-        {            
+        { 
+            console.log("action.Submit1=" + action);
             ajouterFavoris(); //console.log("ajout");
         }
         else
         {            
+            console.log("action.Submit2=" + action);
             modifierFavoris(this.getAttribute("ligne"),this.getAttribute("index")); //console.log("modifier")
         }
+        console.log("action.Submit2=" + action);
         $("#ajouterFavForm").hide();
     });
 
     // cta MODIFIER
-    $('.modifButton').on('click', function (event) 
+    $(".modifIco").on('click', function (event) 
     {
+        console.log("action.Modif?=" + action);
         $("#ajouterFavForm").hide();
         $(".modifIco")[0].parentNode.parentNode.getAttribute("name");
         line= this.parentNode.parentNode.getAttribute("name");
-        console.log('l='+line);
+        console.log('line='+line);
         if(action == "Modifier")
         {
             action = null;
-            $('div[name='+line+'] span.modif').removeClass("show");
+            console.log("action.Modif1=" + action);
+            $('span.modif').removeClass("show");
+            $('span.suppr').removeClass("show");
         }
         else 
         {
             action = "Modifier";
-            $('div[name='+line+'] span.modif').addClass("show");
-            $('div[name='+line+'] span.suppr').removeClass("show");
+            console.log("action.Modif2=" + action);
+            $('span.modif').removeClass("show");
+            $('span.suppr').removeClass("show");
+            $('div[name='+line+'] span.modif').toggleClass("show");
         }
-
     });
 
     // cta SUPPRIMER
-    $('.supprButton').on('click', function (event) 
+    $('.supprIco').on('click', function (event) 
     {
         $("#ajouterFavForm").hide();
         $(".supprIco")[0].parentNode.parentNode.getAttribute("name");
         line= this.parentNode.parentNode.getAttribute("name");
         console.log('l='+line);
+        console.log("action.suppr?=" + action);
         if(action == "Supprimer")
         {
             action = null;
-            $('div[name='+line+'] span.suppr').removeClass("show");
+            console.log("action.suppr1=" + action);
+            $('span.suppr').removeClass("show");
+            $('span.modif').removeClass("show");
         }
         else 
         {
             action = "Supprimer";
+            console.log("action.suppr2=" + action);
+            $('span.suppr').removeClass("show");
+            $('span.modif').removeClass("show");
             $('div[name='+line+'] span.suppr').addClass("show");
-            $('div[name='+line+'] span.modif').removeClass("show");
-           
         }
     });
 
@@ -258,7 +267,7 @@ $(document).ready(function () {
 
 
 
-// DRAG AND DROP ***********************************************
+/* DRAG AND DROP ***********************************************
 function allowDrop(ev) {
     ev.preventDefault();
     console.log("dropped");
@@ -294,4 +303,4 @@ function drop(ev) {
         
     }
 }
-// DRAG AND DROP ***********************************************
+// DRAG AND DROP ************************************************/
