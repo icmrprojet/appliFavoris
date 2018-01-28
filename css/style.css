@@ -37,9 +37,11 @@ body {
 	position: relative;
 	height: 100vh;
 	box-sizing: border-box;
+	margin:0;
+	padding:0;
 }
-/*
-.filtreOut{
+
+.filtreOff{
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -52,10 +54,10 @@ body {
 }
 .filtreOn{
 	pointer-events: auto;
-	opacity:0.5;
+	opacity:0.7;
 	transition: 1s;
 }
-*/
+
 .general {
 	width: 100%;
 	height: 100vh;
@@ -63,6 +65,7 @@ body {
 
 h1{
     font-family: 'Roboto';
+    text-transform: capitalize;
     font-size:20px;
     line-height:40px;
     font-weight:100;
@@ -83,116 +86,86 @@ h1{
     display:block!important;
     z-index: 9999;
 }
-
-
-/*MENU addSite+*/
-.addSite{
-    background-color:rgb(218,219,218);
-    position: absolute;
-    top:-1000px;
-    left:-1000px;
-    box-sizing: border-box;
-    width:300px;
-    height:300px;
-    text-align: center;
-    border-radius: 3px;
-    z-index:9999;
-}
-.titre{
-    display: block;
-    height:40px;
-    background-color:#fff;
-    border-radius: 3px 3px 0 0;
-    font-size:30px;
-    text-align: left;
-    padding-left:30px;
-}
-.close{
-    float: right;
-    height:30px;
-    font-size:20px;
-    line-height:30px;
-    margin:2px 10px;
-}
-.logoCentral{
-	overflow: hidden;
-	width:80px;
-	height:80px;
-	margin:30px 5px 10px 110px;
-	border-radius: 3px;
-	background-color: #ffffff;
-	box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, .4);
-}
-input{
-    color:#666;
-    width: 80%;
-    margin:5px 0;
-    padding: 5px;
-    border:0;
-    border-radius:3px;
-    font-size: 12px;
-}
-#urlSiteBis{
-	position: absolute;
-	top:-1000px;
-	left:-1000px;
-	color:#666;
-	width: 200px;
-	margin:5px 0;
-	padding: 5px;
-	border:0;
-	border-radius:3px;
-	font-size: 12px;
-	z-index:9999;
-}
-.ctaGliss{
-    margin-top:34px;
-    text-align:left;
-} 
-
-/*CHOIX LOGO*/
-
-.choixLogos{
-	position: absolute;
-	top:-1000px;
-	left:-1000px;
-	width: 280px;
-	height:300px;
-	box-sizing: border-box;
-	overflow-y: scroll;
-	background-color: #848484;
-	padding:10px;
-	border-radius:6px;
-	z-index:9999;
-}
-.choixLogos img{
-    margin:3px 5px;
+/* -----------AFFICHAGE SECTIONS------------- */
+.bouddha {
+    position: relative;
+    top:35vh;
+    left:100px;
+    float:left;
+    margin: 0;
     width: 50px;
+    height: 80px;
+    z-index: 999;
 }
-
-/* ********************/
-
-#ajouterFavForm{
-position:absolute;
-top:0px;
-left:20%;
-}
-
-#affichage{
-	position: relative;
+.container{
+	box-sizing: border-box;
 	display:block;
-	height: 300px;
-	width:80%;
-	top:100px;
-}.test{
-	cursor: pointer;
+	height:100vh;
+	width:100vw;
+	background: red;
+	vertical-align: top;
+}
+.moveContainerDown{
+	transform: translate(60px, 60px);
+    transition: 0.6s;
+}
+.moveContainerTop{
+	transform: translate(0, 0);
+    transition: 0.6s;
+}
+.bda{
+	float: left;
+    top:0;
+    left:0;
+    width:100px;
+    height:100vh;
+    margin:0;
+	padding:0;
+	background: green;
+}
+#affichage{
+	float: left;
+	top:0;
+    left:0;
+	width: 70%;
+	margin-top:20vh;
+	box-sizing: border-box;
+	display:block;
+	background: orange;
+}
+
+/* -----------AFFICHAGE LIGNES------------- */
+
+
+.ligne{
+	display: inline-block;
+	box-sizing: border-box;
+	border-radius: 5px;
+	background: #eee;
+	margin:10px;
+	padding:10px;
+}
+.entete{
+	font-family: 'Roboto';
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	float:left;
+	width:100px;
+	height:60px;
+	margin:10px 5px;
+	text-align: center;
+	padding:0px;
+	color:#000;
+	font-size:24px;
+	font-weight: 100;
 }
 .pave{
 	position: relative;
 	display: block;
 	box-sizing: border-box;
 	float:left;
-	margin:0 5px;
+	margin:5px;
 	text-align: center;
 }
 .pave span:nth-of-type(1), button{
@@ -208,6 +181,8 @@ left:20%;
 	background-repeat:no-repeat;
 }
 button{
+	outline: none;
+	cursor: pointer;
 	border:none;
 	background-image: none;
 }
@@ -224,21 +199,6 @@ button{
 .fav:hover {
 	transform: scale(1.1);
     transition: 0.5s; 
-}
-.entete{
-	font-family: 'Roboto';
-	position: relative;
-	display: block;
-	box-sizing: border-box;
-	float:left;
-	width:100px;
-	height:60px;
-	margin:10px 5px;
-	text-align: center;
-	padding:0px;
-	color:#000;
-	font-size:24px;
-	font-weight: 100;
 }
 .ligne:hover .entete{
 	transform: translateY(-10px);
@@ -294,17 +254,6 @@ button{
 	opacity:1;
 	transition: 0.5s;
 }
-
-.ligne{
-	display: block;
-	box-sizing: border-box;
-	width:100%;
-	height:90px;
-	border-radius: 5px;
-	background: #eee;
-	margin:10px;
-	padding:10px;
-}
 .pave.coche:after{
 	content:"";
 	position: absolute;
@@ -337,20 +286,4 @@ button{
 	background-size:100%;
 	background-repeat:no-repeat;
 	z-index: 999;
-}
-.z{
-	position: fixed;
-	display: block;
-	margin:10px;padding:10px;
-	width:100%;
-}
-.temp{
-	display:inline-block;
-	border:1px solid black;
-	width:100px;
-	float:left;
-	padding: 5px 20px;
-	margin:0 20px;
-	font-size:14px;
-	text-align: center;
 }

@@ -3,40 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>V3-AFFICHAGE</title>
-    <script
-            src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
-    <script src="./js/favoris.js"></script>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link rel="stylesheet" type="text/css" href="./css/menu.css">
 </head>
 
-<body>
-	<div class="filtreOut"></div>   
+<body class="blue corp">
+    <div class="filtre"></div>   
+    <div class="choixLogos moyen"></div>
+    <input id="urlSiteBis" type="text" placeholder="URL...">
+  
+	<img class="bouddha" src="./images/bouddha_white.png">
+	<div class="container">
+		<section class="bda">
+			<div class="menuBda">
+			    <ul>
+			      <li id="themes" class="cta clair">Thèmes</li>
+			        <div id="boxThemes" class="boxMenu moyen">
+			          <p class="para txtclair" >Select a theme in the list below to change the color scheme.</p>
+			          <ul>
+			            <li id="c1" class="green"></li>
+			            <li id="c2" class="red"></li>
+			            <li id="c3" class="blue"></li>
+			            <li id="c4" class="white"></li>
+			            <li id="c5" class="pink"></li>
+			            <li id="c6" class="brown"></li>
+			          </ul>
+			        </div>  
+			      <li id="fbapi" class="cta clair">FaceBook API</li>
+			        <div id="boxFbApi" class="boxMenu moyen">
+			          <p class="para txtclair">In order for automatic logo finger to work you'll to supply your own App ID/Secret for the Facebook API. <u>Learn more</u>.</p>
+			          <input id="appId" type="text" placeholder="Facebook App ID">
+			          <input id="appSecret" type="text" placeholder="Facebook App Secret">
+			          <button id="save" class="toolbox">Save</button>
+			        </div>
 
-	<div class="choixLogos moyen"></div>
-	<input id="urlSiteBis" type="text" placeholder="URL...">
-	<div id="ajouterFavForm" class="addSite clair">
-		<div class="titre">
-	    <h1 class="left">Add a Site</h1><span class="close"><i class=" cross fa fa-times" aria-hidden="true"></i></span>
+			      <li id="import" class="cta">Import</li>
+			      <li id="notifications" class="cta">Notifications</li>
+			      <li id="share" class="cta">Share</li>
+			    </ul>
+			</div>
+		</section>
+
+		<section id="affichage">
+		</section>
+	</div>
+
+    <section class="menuAdd">
+		<div id="ajouterFavForm" class="addSite clair">
+			<div class="titre">
+		    <h1 class="left">Add a Site</h1><span class="close"><i class=" cross fa fa-times" aria-hidden="true"></i></span>
+			</div>
+			<div class="logoCentral left"><img id="logo" class="left" src="images/b_80x80.png" /></div>
+			<span class="ctaGliss left">
+		        <button id="moreImages" class="toolboxS">More images</button>
+		        <button id="setUrl" class="toolboxS">Set URL</button>
+		    </span>
+			<form id="ajouterFav">
+				<input id="ligneFavName" type="hidden"/>
+				<input type="text" name="siteName" />
+				<input type="text" name="urlImage" />
+				<input type="text" name="siteUrl" />
+				<input id="formSubmit" type="submit" class="toolbox" value="Ajouter">
+			</form>
 		</div>
-		<div class="logoCentral left"><img id="logo" class="left" src="images/buddha_greytransp.png" /></div>
-		<span class="ctaGliss left">
-	        <button id="moreImages" class="toolboxS">More images</button><br>
-	        <button id="setUrl" class="toolboxS">Set URL</button>
-	    </span>
-		<form id="ajouterFav">
-			<input id="ligneFavName" type="hidden"/>
-			<input type="text" name="siteName" /><br />
-			<input type="text" name="urlImage" /><br />
-			<input type="text" name="siteUrl" /><br />
-			<input id="formSubmit" type="submit" value="Ajouter">
-		</form>
-	</div>
+	</section>
 
-	<div id="affichage">
-	</div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="./js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
+    <script src="./js/favoris.js"></script>
+    <script src="./js/menu.js"></script>
 
 </body>
 </html>

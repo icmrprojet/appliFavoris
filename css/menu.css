@@ -10,36 +10,54 @@
 .left{
     float:left;
 }
-.hide{
-    display:none;
+
+
+
+/*----------BOUDDHA MENU ----------*/
+.enlarge{
+    width:200px;
+    transition-property: width;
+    transition: 0.6s;
 }
-.disappear{
-    transition: all 0.5s;
-    opacity: 0;   
+.lesslarge{
+    width:100px;
+    transition-property: width;
+    transition: 0.6s;
 }
-.appear{
-    transition: all 0.5s;
-    opacity: 100;
+.moveUp{
+    transform: translate(30px, -180px);
+    transition: 0.6s;
 }
-.show{
-    display:block;
+.moveDown{
+    transform: translate(0, 0);
+    transition: 0.6s;
 }
-.menuCta{
+.menuBda{
     position: relative;
     box-sizing: border-box;
     left:-1000px;
-    top:4vh;
+    top:200px;
     width: 240px;
     margin:0;
     text-align:center;
     z-index:9999;
 }
-.menuCta ul{
+.moveRight{
+    transform: translate(990px, 0);
+    transform: scale(20%);
+    transition: 1s;
+}
+.moveBack{
+    transform: translate(-990px, 0);
+    transform: scale();
+    transition: 1.2s;
+}
+.menuBda ul{
     box-sizing: border-box;
     margin:0;padding:0;
     list-style-type: none;
 }
-.menuCta ul li{
+.menuBda ul li{
     cursor:pointer;
     width:100%;
     margin:0;
@@ -49,23 +67,23 @@
     font-weight:300;
     text-align: center;
 }
-.menuCta .cta{
+.menuBda .cta{
     background-color:rgba(255,255,255,.9);
 }
-.menuCtaFirst{
+.menuBdaFirst{
     border-radius:5px 5px 0 0;
 }
-.menuCta .cta:nth-child(1){
+.menuBda .cta:nth-child(1){
     background-color:rgba(255,255,255,.7);
     border-radius:5px 5px 0 0;
 }
-.menuCta .cta:nth-child(5){
+.menuBda .cta:nth-child(5){
     background-color:rgba(255,255,255,.7);
 }
-.menuCta .cta:nth-child(7){
+.menuBda .cta:nth-child(7){
     background-color:rgba(255,255,255,.7);
 }
-.menuCta .cta:last-child{
+.menuBda .cta:last-child{
     border-radius:0 0 5px 5px;
 }
 .cta::before{
@@ -108,7 +126,9 @@
 .toolbox{
     font-size: 12px;
     padding:8px 15px;
-    margin:5px;
+    margin:5px auto;
+    height:auto;
+    width:auto;
     background-color:#fff;
     border:1px solid #fff;
     border-radius:3px;
@@ -124,6 +144,8 @@
     font-size: 12px;
     padding:5px 10px;
     margin:5px;
+    height:auto;
+    width:auto;
     background-color:#fff;
     border:1px solid #fff;
     border-radius:3px;
@@ -218,4 +240,100 @@ input{
 .turn:after{
     transition: all 0.5s;
     transform: rotate(-180deg);
+}
+
+/* -----------MENU ADD SITE------------- */
+
+#ajouterFavForm{
+    position:absolute;
+    box-sizing: border-box;
+    top:30px;
+    left:2%;
+}
+.ajouterFav{
+    display:inline-block;
+}
+.addSite{
+    background-color:rgb(218,219,218);
+    position: absolute;
+    top:-1000px;
+    left:-1000px;
+    box-sizing: border-box;
+    width:300px;
+    height:auto;
+    padding-bottom:10px; 
+    text-align: center;
+    border-radius: 3px;
+    z-index:9999;
+}
+.titre{
+    display: block;
+    height:40px;
+    background-color:#fff;
+    border-radius: 3px 3px 0 0;
+    font-size:30px;
+    text-align: left;
+    padding-left:30px;
+}
+.close{
+    float: right;
+    height:30px;
+    font-size:20px;
+    line-height:30px;
+    margin:2px 10px;
+}
+.logoCentral{
+    overflow: hidden;
+    width:80px;
+    height:80px;
+    margin:30px 5px 10px 110px;
+    border-radius: 3px;
+    background-color: #ffffff;
+    box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, .4);
+}
+input{
+    color:#666;
+    width: 80%;
+    margin:5px 0;
+    padding: 5px;
+    border:0;
+    border-radius:3px;
+    font-size: 12px;
+}
+#urlSiteBis{
+    position: absolute;
+    top:-1000px;
+    left:-1000px;
+    color:#666;
+    width: 200px;
+    margin:5px 0;
+    padding: 5px;
+    border:0;
+    border-radius:3px;
+    font-size: 12px;
+    z-index:9999;
+}
+.ctaGliss{
+    margin-top:34px;
+    text-align:left;
+} 
+
+/* -----------CHOIX LOGO------------- */
+
+.choixLogos{
+    position: absolute;
+    top:-1000px;
+    left:-1000px;
+    width: 280px;
+    height:300px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    background-color: #848484;
+    padding:10px;
+    border-radius:6px;
+    z-index:9999;
+}
+.choixLogos img{
+    margin:3px 5px;
+    width: 50px;
 }

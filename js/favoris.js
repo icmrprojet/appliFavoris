@@ -15,7 +15,6 @@ var data2 = {
     monthly: []
     };
 }*/
-var action = null;
 //Constructeur pour l'objet Favoris
 function Favoris(urlImage, siteName, siteUrl, lastVisitDate)
 {
@@ -30,37 +29,30 @@ function chargerFavoris() {
     var day=1000*60*60*24;
     var week = day*7;
     var month = day*30;
+    //var other=day*360;
 	data = pullLocalStorageInto();
-	var index=0;
-    console.log("actioncharger?=" + action);
-    //daily
-    var lignesFavoris = '<div class="ligne" name="daily" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Daily</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
-    data.daily.forEach(function (element) {
-		index++;
-        lignesFavoris += printElement(element, day, index);
-        });
-    lignesFavoris += '<button class="test pave" name="daily">+</button></div>'; 
-    //weekly
-    lignesFavoris += '<div class="ligne" name="weekly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Weekly</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
-	index = 0;
-	data.weekly.forEach(function (element) {
-		index++;
-        lignesFavoris += printElement(element, week, index);
-        });
-	lignesFavoris += '<button class="test pave" name="weekly">+</button></div>';
-    //monthly
-    lignesFavoris += '<div class="ligne" name="monthly" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>Monthly</h1><span class="modifIco"></span><span class="supprIco"></span></div>';
-	index = 0;
-	data.monthly.forEach(function (element) {
-		index++;
-        lignesFavoris += printElement(element, month, index);
-        });
-    lignesFavoris += '<button class="test pave" name="monthly">+</button></div>';
+
+function generateLine(type, collection, time) {
+    var lineTemp = '<div class="ligne" name="' + type + 
+    '" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>' + type +
+    '</h1><span class="modifIco" data-active="false" data-type="'+ type +'"></span><span class="supprIco" data-active="false" data-type="' + type + '"></span></div>';
+    collection.forEach(function (element, index) {
+        lineTemp += printElement(element, time, index);
+    });
+    lineTemp += '<button class="test pave" name="' + type + '">+</button></div>'; 
+    return lineTemp;
+
+    }
+    var lignesFavoris = generateLine('daily', data.daily, day);
+    lignesFavoris += generateLine('weekly', data.weekly, week);
+    lignesFavoris += generateLine('monthly', data.monthly, month);
+    //lignesFavoris += generateLine('otherly', data.otherly, other);
+
     $("#affichage").html(lignesFavoris);
     liaisonOnClicks();
+    bindActionsButtons();
 }
 
-// PRINT DU DOM
 function printElement(element, date, order) {
     var favoris ='<div class="pave fav ';
     if((Date.now()-element.lastVisitDate-date)<0)
@@ -68,7 +60,7 @@ function printElement(element, date, order) {
         favoris += 'coche';
     }
     var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
-    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="blank" href="' + element.urlImage + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
+    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="_blank" href="' + element.siteUrl + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
 }
 
 // ON CLICK
@@ -78,26 +70,23 @@ function liaisonOnClicks(){
     // CLICK sur AJOUTER
     $(".test").on("click",function(){
         $("#ligneFavName").attr("name",this.name);
-        console.log("action.test?=" + action);
-        action = "Ajouter";
-        console.log("action.test1=" + action);
-        $("#formSubmit")[0].setAttribute("value",action);
+        $("#formSubmit")[0].setAttribute("value", "Ajouter");
         $("#ajouterFavForm").toggle();
+        $(".container").toggleClass('moveContainerTop');
+        $(".container").toggleClass('moveContainerDown');
         // vider les champs du formulaire
         $('input[name=urlImage]').val("");
         $('input[name=siteName]').val("");
         $('input[name=siteUrl]').val("");
-        $('span.modif').removeClass("show");
-        $('span.suppr').removeClass("show");
+        disactiveAllButtons();
     })
 
     // CLICK sur un FAVORIS
     $('.fav').on('click', function (elem) { 
         var ligne =  this.parentElement.getAttribute("name");
-        var index = this.getAttribute("name")-1;
+        var index = this.getAttribute("name");
 		console.log(ligne, index);
-        console.log("action.fav=" + action);	
-        if(action == "Modifier") 
+        if($(this).children('.modif.show').length > 0) 
         {
 
             if(!$("#ajouterFavForm").is(':visible')) // si menu n'est pas visible
@@ -106,20 +95,22 @@ function liaisonOnClicks(){
                 $('input[name=siteName]').val(data[ligne][index].siteName);
                 $('input[name=siteUrl]').val(data[ligne][index].siteUrl);
                 $("#ajouterFavForm").show();
-                $("#formSubmit")[0].setAttribute("value",action);
+                $(".container").removeClass('moveContainerTop');
+                $(".container").addClass('moveContainerDown');
+                $("#formSubmit")[0].setAttribute("value","Modifier");
                 $("#formSubmit")[0].setAttribute("ligne",ligne);
                 $("#formSubmit")[0].setAttribute("index",index);        
             }
             else
             {
                 $("#ajouterFavForm").hide();
+                $(".container").addClass('moveContainerTop');
+                $(".container").removeClass('moveContainerDown');
                 action=null;
-                $('span.modif').removeClass("show");
-                $('span.suppr').removeClass("show");
 
             }
         }
-        else if(action == "Supprimer")
+        else if($(this).children('.suppr.show').length > 0)
         {
             supprimerFavoris(ligne,index); 
             console.log(index);
@@ -131,6 +122,7 @@ function liaisonOnClicks(){
             saveLocalStorage(data);
 			chargerFavoris();
         }
+        disactiveAllButtons();
     });
 }
 
@@ -144,7 +136,7 @@ function pullLocalStorageInto(){
 	if(!localStorage.getItem('data'))
 	{
         //Si l'entrée liée à la clé 'data' est vide alors renvoi d'une liste de 3 tableaux vides
-		return  {daily: [],weekly: [],monthly: []};
+		return  {daily: [],weekly: [],monthly: [],};
 	}
 	else
         //Si l'entrée liée à la clé 'data' est pleine alors renvoi d'une liste de 3 tableaux pleins du LS
@@ -154,7 +146,6 @@ function pullLocalStorageInto(){
 
 // AJOUTER FAVORIS
 function ajouterFavoris() {
-    console.log("action.ajouterfav?=" + action);
 	var ligne = $("#ligneFavName").attr("name"); //Récupération du DOM depuis les champs du formulaire
 	var urlImage = $('input[name=urlImage]').val();
     var siteName = $('input[name=siteName]').val();
@@ -168,7 +159,6 @@ function ajouterFavoris() {
 
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
-    action = null;
     console.log(ligne,index)
     data[ligne].splice(index,1);
     saveLocalStorage(data);
@@ -187,87 +177,75 @@ function modifierFavoris(ligne, index) {
     chargerFavoris();
 }
 
-$(document).ready(function () {
-	$("#ajouterFavForm").hide();
-    chargerFavoris();
-	// MISE EN PLACE des evenements de click sur les elements du DOM présents dans le fichier HTML
-    
-    // cta AJOUTER ou autre possiblité MODIFIER
-    $('#formSubmit').on('click', function (event)   
+function disactiveAllButtons() {
+        function disactivate() {
+             $(this).data('active', false);
+        }
+        $(".modifIco").each(disactivate); // Passer la function en paramètre
+        $(".supprIco").each(disactivate); 
+        $('span.modif').removeClass("show");
+        $('span.suppr').removeClass("show");
+}
+
+
+function bindActionsButtons() {
+    $("#ajouterFavForm").hide();
+    $(".container").addClass('moveContainerTop');
+    $(".container").removeClass('moveContainerDown');
+  
+    // cta SUBMIT formulaire
+    $('#formSubmit').unbind('click').on('click', function (event)   
     {
         event.preventDefault();
-        console.log("action.Submit?=" + action);
+        var action = $("#formSubmit")[0].getAttribute("value");
+        console.log(action);
         if(action == "Ajouter")
         { 
-            console.log("action.Submit1=" + action);
-            ajouterFavoris(); //console.log("ajout");
+            ajouterFavoris();
         }
         else
         {            
-            console.log("action.Submit2=" + action);
             modifierFavoris(this.getAttribute("ligne"),this.getAttribute("index")); //console.log("modifier")
         }
-        console.log("action.Submit2=" + action);
         $("#ajouterFavForm").hide();
+        $(".container").addClass('moveContainerTop');
+        $(".container").removeClass('moveContainerDown');
     });
 
+    // cta ICONES d'edition-modification-suppression
+    function actionButton(typeButton) {
+        return function () {
+            var currentLine = $(this).data('type');
+            var active = $(this).data("active");
+
+            $("#ajouterFavForm").hide();
+            $(".container").addClass('moveContainerTop');
+            $(".container").removeClass('moveContainerDown');
+            disactiveAllButtons();
+
+            if (!active) {
+                $(this).data('active', true);
+                $('div[name='+currentLine+'] span.' + typeButton).addClass("show");
+            }
+        }
+    }
     // cta MODIFIER
-    $(".modifIco").on('click', function (event) 
-    {
-        console.log("action.Modif?=" + action);
-        $("#ajouterFavForm").hide();
-        $(".modifIco")[0].parentNode.parentNode.getAttribute("name");
-        line= this.parentNode.parentNode.getAttribute("name");
-        console.log('line='+line);
-        if(action == "Modifier")
-        {
-            action = null;
-            console.log("action.Modif1=" + action);
-            $('span.modif').removeClass("show");
-            $('span.suppr').removeClass("show");
-        }
-        else 
-        {
-            action = "Modifier";
-            console.log("action.Modif2=" + action);
-            $('span.modif').removeClass("show");
-            $('span.suppr').removeClass("show");
-            $('div[name='+line+'] span.modif').toggleClass("show");
-        }
-    });
+    $(".modifIco").unbind('click').on('click', actionButton('modif'));
 
     // cta SUPPRIMER
-    $('.supprIco').on('click', function (event) 
-    {
-        $("#ajouterFavForm").hide();
-        $(".supprIco")[0].parentNode.parentNode.getAttribute("name");
-        line= this.parentNode.parentNode.getAttribute("name");
-        console.log('l='+line);
-        console.log("action.suppr?=" + action);
-        if(action == "Supprimer")
-        {
-            action = null;
-            console.log("action.suppr1=" + action);
-            $('span.suppr').removeClass("show");
-            $('span.modif').removeClass("show");
-        }
-        else 
-        {
-            action = "Supprimer";
-            console.log("action.suppr2=" + action);
-            $('span.suppr').removeClass("show");
-            $('span.modif').removeClass("show");
-            $('div[name='+line+'] span.suppr').addClass("show");
-        }
-    });
+    $('.supprIco').unbind('click').on('click', actionButton('suppr'));
 
-});// fin document ready
+}
+
+
+
+$(document).ready(chargerFavoris);// fin document ready
 
 
 
 
 
-/* DRAG AND DROP ***********************************************
+//DRAG AND DROP ***********************************************
 function allowDrop(ev) {
     ev.preventDefault();
     console.log("dropped");
@@ -299,8 +277,44 @@ function drop(ev) {
     {
         var ligne = ev.target.getAttribute("name");
         droppedFavoris(ligne, urlImage, siteName);
-        supprimerFavoris(ligneSrc, index-1);
-        
+        supprimerFavoris(ligneSrc, index-1);        
     }
 }
-// DRAG AND DROP ************************************************/
+
+
+
+
+//------------ INTERACTION CSS ----------------------//
+
+$(".bouddha").on("click",function(){
+        actionBda();
+    });
+
+function actionBda(){
+    $(".bouddha").toggleClass("open");
+    if ($(".bouddha").hasClass("open") == true)
+    {
+        $(".bda").addClass("enlarge");
+        $(".bda").removeClass("lesslarge");
+        $(".menuBda").addClass("moveRight");
+        $(".menuBda").removeClass("moveBack");
+        $(".bouddha").addClass("moveUp");
+        $(".bouddha").removeClass("moveDown");
+        $(".filtre").addClass("filtreOn");
+        $(".filtre").removeClass("filtreOff");
+    }else{
+        $(".bda").removeClass("enlarge");
+        $(".bda").addClass("lesslarge");
+        $(".menuBda").removeClass("moveRight");
+        $(".menuBda").addClass("moveBack");
+        $(".bouddha").removeClass("moveUp");
+        $(".bouddha").addClass("moveDown");
+        $(".filtre").removeClass("filtreOn");
+        $(".filtre").addClass("filtreOff");          
+    }
+        var valeurId= localStorage.getItem('valeurId');
+        var valeurSecret=localStorage.getItem('valeurSecret');  
+        //console.log(valeurId + valeurSecret);
+        $("#appId").val(valeurId);
+        $("#appSecret").val(valeurSecret);
+}
