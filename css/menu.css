@@ -25,7 +25,7 @@
     transition: 0.6s;
 }
 .moveUp{
-    transform: translate(30px, -180px);
+    transform: translate(30px, -220px);
     transition: 0.6s;
 }
 .moveDown{
@@ -333,7 +333,7 @@ input{
     border-radius:6px;
     z-index:9999;
     opacity:0;
-    transition: .5s;
+    pointer-events: none;
 }
 .choixLogoOpen{
     opacity:1;
