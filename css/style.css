@@ -334,3 +334,6 @@ button{
 .ligne:hover .test{
 	display:block;
 }
+.choixLogo{
+	left:300px;
+}

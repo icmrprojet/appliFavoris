@@ -143,6 +143,16 @@ function pullLocalStorageInto(){
 		return  JSON.parse(localStorage.getItem('data'));
 }
 
+// Enregistrement des codes Facebook en localStorage  
+$("#save").click(function(){
+    var valeurId = $("#appId").val();
+    var valeurSecret = $("#appSecret").val();
+    localStorage.setItem("valeurId", valeurId);
+    localStorage.setItem("valeurSecret", valeurSecret);
+    actionBda();
+});
+
+
 
 // AJOUTER FAVORIS
 function ajouterFavoris() {
@@ -287,6 +297,7 @@ function droppedFavoris(ligne, urlImage,siteName){
 
 //------------ INTERACTION CSS ----------------------//
 
+
 $(".bouddha").on("click",function(){
         actionBda();
     });
@@ -315,7 +326,82 @@ function actionBda(){
     }
         var valeurId= localStorage.getItem('valeurId');
         var valeurSecret=localStorage.getItem('valeurSecret');  
-        //console.log(valeurId + valeurSecret);
+        //console.log(valeurId +" & "+ valeurSecret);
         $("#appId").val(valeurId);
         $("#appSecret").val(valeurSecret);
 }
+
+// RECUPERATION DES LOGOS VIA L'API faceBook + Affichage
+function getPictures(query, AppId, AppSecret){
+    query=localStorage.getItem('nomSite');
+    //var AppId='437660773298889';  2020717434610108
+    AppId=localStorage.getItem('valeurId');
+    //var AppSecret='371758459896094a60e6c3b878aa947a';// 1521d30b298933cea6c6f499b0d989c3
+    AppSecret = localStorage.getItem('valeurSecret');
+    $.getJSON('https://graph.facebook.com/search?q='+query+'&type=page&access_token='+AppId+'|'+AppSecret+'',function(monJSON){
+        var length = monJSON.data.length;
+        for(var i=0;i<15;i++){
+            var pageid = monJSON.data[i].id;
+            $('.choixLogos').append('<img id="page-'+i+'" src="https://graph.facebook.com/'+pageid+'/picture/?width=200">');
+        }
+        // création du logo central qui doit apparaitre en quittant le focus sur champ nom
+        var pageid = monJSON.data[0].id;// on prend par defaut le premier logo du tableau cad l'index 0
+        $('#logo').attr('src',"https://graph.facebook.com/"+pageid+"/picture/?width=80");
+    });
+}
+function ajouterPicture(){
+    var query = $("#nomSite").val();
+    localStorage.setItem("nomSite", query);
+    $("#moreImages").addClass("opacity1");
+    $("#setUrl").addClass("opacity1");
+    $('#nomSite').removeClass("infosOn");
+    getPictures();
+}
+// Affichage du Logo central quand on quitte le focus du champ nom
+$("#nomSite").focusout(ajouterPicture);
+// Remplacement du logo central en cliquant sur les vignettes
+$(".choixLogos").click(function(a){
+    if(a.target.id.indexOf("page-") != -1)
+    {
+        //console.log(a.target.id);     
+        var urlPict=a.target.src;
+        //console.log(a.target.src);
+        $('#logo').attr('src',urlPict).css("width","80");
+    }
+});
+// remplacement du logo central par la saisie de l'url d'une image
+$('#urlSiteBis').keyup(function(e) {   
+    var urlBis= $("#urlSiteBis").val(); 
+    if(e.keyCode == 13) 
+    { // KeyCode de la touche entrée
+        $('#logo').attr('src',urlBis);
+        $("#urlSiteBis").animate({"left":"5"});
+    }
+});
+// ouvrir fermer choix logo : toogleClass
+$("#moreImages").on("click",function(){
+    event.preventDefault();
+    $("#moreImages").toggleClass("openchoixlogo");
+    if($("#moreImages").hasClass("openchoixlogo"))
+    {
+        $(".choixLogos").addClass("choixLogoOpen");
+    }else{
+        $(".choixLogos").removeClass("choixLogoOpen");
+    }
+});
+// ouvrir fermer set url : toogleClass
+$("#setUrl").on("click",function(){
+    $("#setUrl").toggleClass("openUrl");
+    if($("#setUrl").hasClass("openUrl"))
+    {
+        //$("#moreImages").removeClass("openchoixlogo");
+        $(".choixLogos").animate({"left":"5"});
+        $("#moreImages").text("More images");
+        $("#urlSiteBis").animate({"left":"315"});
+    }else{
+        $("#urlSiteBis").animate({"left":"5"});             
+    }
+});
+
+
+
