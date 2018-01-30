@@ -29,7 +29,7 @@ function chargerFavoris() {
     var day=1000*60*60*24;
     var week = day*7;
     var month = day*30;
-    //var other=day*360;
+    var year = day*365;
 	data = pullLocalStorageInto();
 
 function generateLine(type, collection, time) {
@@ -46,7 +46,7 @@ function generateLine(type, collection, time) {
     var lignesFavoris = generateLine('daily', data.daily, day);
     lignesFavoris += generateLine('weekly', data.weekly, week);
     lignesFavoris += generateLine('monthly', data.monthly, month);
-    //lignesFavoris += generateLine('otherly', data.otherly, other);
+    lignesFavoris += generateLine('yearly', data.yearly, year);
 
     $("#affichage").html(lignesFavoris);
     liaisonOnClicks();
@@ -99,7 +99,7 @@ function liaisonOnClicks(){
                 $(".container").addClass('moveContainerDown');
                 $("#formSubmit")[0].setAttribute("value","Modifier");
                 $("#formSubmit")[0].setAttribute("ligne",ligne);
-                $("#formSubmit")[0].setAttribute("index",index);        
+                $("#formSubmit")[0].setAttribute("index",index);       
             }
             else
             {
@@ -136,7 +136,7 @@ function pullLocalStorageInto(){
 	if(!localStorage.getItem('data'))
 	{
         //Si l'entrée liée à la clé 'data' est vide alors renvoi d'une liste de 3 tableaux vides
-		return  {daily: [],weekly: [],monthly: [],};
+		return  {daily: [],weekly: [],monthly: [],yearly: [],};
 	}
 	else
         //Si l'entrée liée à la clé 'data' est pleine alors renvoi d'une liste de 3 tableaux pleins du LS
@@ -159,7 +159,7 @@ function ajouterFavoris() {
 
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
-    console.log(ligne,index)
+    //console.log(ligne,index)
     data[ligne].splice(index,1);
     saveLocalStorage(data);
     chargerFavoris();
@@ -246,6 +246,20 @@ $(document).ready(chargerFavoris);// fin document ready
 
 
 //DRAG AND DROP ***********************************************
+function drop(ev) {
+    ev.preventDefault();
+    var urlImage = ev.dataTransfer.getData("urlImage");
+    var siteName = ev.dataTransfer.getData("siteName");
+    var index = ev.dataTransfer.getData("index");
+    var ligneSrc = ev.dataTransfer.getData("ligneSrc");
+    if(ev.target.className == "ligne")
+    {
+        var ligne = ev.target.getAttribute("name");
+        droppedFavoris(ligne, urlImage, siteName);
+        supprimerFavoris(ligneSrc, index-1);        
+    }
+}
+
 function allowDrop(ev) {
     ev.preventDefault();
     console.log("dropped");
@@ -263,23 +277,10 @@ function droppedFavoris(ligne, urlImage,siteName){
     var newFavoris = new Favoris(urlImage,siteName,"",0); // 
     data[ligne].push(newFavoris); // push du nouveau favori dans le tableau ligne
     saveLocalStorage(data);
-    chargerFavoris();
-    
+    chargerFavoris();   
 }
 
-function drop(ev) {
-    ev.preventDefault();
-    var urlImage = ev.dataTransfer.getData("urlImage");
-    var siteName = ev.dataTransfer.getData("siteName");
-    var index = ev.dataTransfer.getData("index");
-    var ligneSrc = ev.dataTransfer.getData("ligneSrc");
-    if(ev.target.className == "ligne")
-    {
-        var ligne = ev.target.getAttribute("name");
-        droppedFavoris(ligne, urlImage, siteName);
-        supprimerFavoris(ligneSrc, index-1);        
-    }
-}
+
 
 
 
