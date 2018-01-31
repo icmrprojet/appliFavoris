@@ -334,9 +334,7 @@ function actionBda(){
 // RECUPERATION DES LOGOS VIA L'API faceBook + Affichage
 function getPictures(query, AppId, AppSecret){
     query=localStorage.getItem('nomSite');
-    //var AppId='437660773298889';  2020717434610108
     AppId=localStorage.getItem('valeurId');
-    //var AppSecret='371758459896094a60e6c3b878aa947a';// 1521d30b298933cea6c6f499b0d989c3
     AppSecret = localStorage.getItem('valeurSecret');
     $.getJSON('https://graph.facebook.com/search?q='+query+'&type=page&access_token='+AppId+'|'+AppSecret+'',function(monJSON){
         var length = monJSON.data.length;
