@@ -24,19 +24,11 @@
     transition-property: width;
     transition: 0.6s;
 }
-.moveUp{
-    transform: translate(30px, -220px);
-    transition: 0.6s;
-}
-.moveDown{
-    transform: translate(0, 0);
-    transition: 0.6s;
-}
 .menuBda{
     position: relative;
     box-sizing: border-box;
     left:-1000px;
-    top:200px;
+    top:220px;
     width: 240px;
     margin:0;
     text-align:center;
@@ -243,12 +235,11 @@ input{
 }
 
 /* -----------MENU ADD SITE------------- */
-
 #ajouterFavForm{
     position:absolute;
     box-sizing: border-box;
     top:30px;
-    left:2%;
+    left:30px;
 }
 .ajouterFav{
     display:inline-block;
@@ -291,6 +282,10 @@ input{
     background-color: #ffffff;
     box-shadow: 0px 3px 0px 0px rgba(0, 0, 0, .4);
 }
+.logoCentral img{
+    height:80px;
+    width:80px;
+}
 input{
     color:#666;
     width: 80%;
@@ -300,19 +295,7 @@ input{
     border-radius:3px;
     font-size: 12px;
 }
-#urlSiteBis{
-    position: absolute;
-    top:-1000px;
-    left:-1000px;
-    color:#666;
-    width: 200px;
-    margin:5px 0;
-    padding: 5px;
-    border:0;
-    border-radius:3px;
-    font-size: 12px;
-    z-index:9999;
-}
+
 .ctaGliss{
     margin-top:34px;
     text-align:left;
@@ -323,7 +306,7 @@ input{
 .choixLogos{
     position: absolute;
     top:30px;
-    left:30px;
+    left:-1000px;
     width: 280px;
     height:280px;
     box-sizing: border-box;
@@ -331,14 +314,43 @@ input{
     background-color: #848484;
     padding:10px;
     border-radius:6px;
-    z-index:9999;
     opacity:0;
-    pointer-events: none;
 }
 .choixLogoOpen{
+    transition: 1s;
     opacity:1;
     top:30px;
-    left:330px;
+    left:340px;
+}
+.choixLogoClosed{
+    transition: .5s;
+    opacity:0;
+    top:30px;
+    left:-1000px;
+}
+#urlSiteBis{
+    position: absolute;
+    top:136px;
+    left:30px;
+    color:#666;
+    width: 200px;
+    margin:5px 0;
+    padding: 5px;
+    border:0;
+    border-radius:3px;
+    font-size: 12px;
+    opacity:0;
+}
+.choixUrlOpen{
+    transition: 1s;
+    opacity:1!important;
+    left:340px!important;
+}
+.choixUrlClosed{
+    transition:.5s;
+    opacity:0!important;
+    left:30px!important;
+    pointer-events: none!important;
 }
 .choixLogos img{
     margin:3px 5px;

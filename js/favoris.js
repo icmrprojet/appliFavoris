@@ -60,7 +60,7 @@ function printElement(element, date, order) {
         favoris += 'coche';
     }
     var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
-    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="_blank" href="' + element.siteUrl + '"><span style="background-image:url('+testImg+')"></span><span> ' + element.siteName + '</span></a></div>';
+    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="_blank" href="' + element.siteUrl + '"><span style="background-image:url('+element.urlImage+')"></span><span> ' + element.siteName + '</span></a></div>';
 }
 
 // ON CLICK
@@ -85,6 +85,7 @@ function liaisonOnClicks(){
     $('.fav').on('click', function (elem) { 
         var ligne =  this.parentElement.getAttribute("name");
         var index = this.getAttribute("name");
+
 		console.log(ligne, index);
         if($(this).children('.modif.show').length > 0) 
         {
@@ -94,6 +95,8 @@ function liaisonOnClicks(){
                 $('input[name=urlImage]').val(data[ligne][index].urlImage);
                 $('input[name=siteName]').val(data[ligne][index].siteName);
                 $('input[name=siteUrl]').val(data[ligne][index].siteUrl);
+                //var urlPict=data[ligne][index].urlImage;
+                //$('#logo').attr('src',urlPict);
                 $("#ajouterFavForm").show();
                 $(".container").removeClass('moveContainerTop');
                 $(".container").addClass('moveContainerDown');
@@ -158,6 +161,7 @@ $("#save").click(function(){
 function ajouterFavoris() {
 	var ligne = $("#ligneFavName").attr("name"); //Récupération du DOM depuis les champs du formulaire
 	var urlImage = $('input[name=urlImage]').val();
+    var urlImage = $('#logo').attr('src');
     var siteName = $('input[name=siteName]').val();
     var siteUrl  = $('input[name=siteUrl]').val();	
 	var newFavoris = new Favoris(urlImage,siteName,siteUrl,0); // 
@@ -178,6 +182,7 @@ function supprimerFavoris(ligne, index) {
 // MODIFIER FAVORIS
 function modifierFavoris(ligne, index) {
     var urlImage = $('input[name=urlImage]').val();
+    console.log(urlImage);
     var siteName = $('input[name=siteName]').val();
     var siteUrl  = $('input[name=siteUrl]').val();
     data[ligne][index].urlImage=urlImage;
@@ -202,6 +207,10 @@ function bindActionsButtons() {
     $("#ajouterFavForm").hide();
     $(".container").addClass('moveContainerTop');
     $(".container").removeClass('moveContainerDown');
+    $("#urlSiteBis").removeClass("choixUrlOpen");
+    $("#urlSiteBis").addClass("choixUrlClosed");
+    $(".choixLogos").removeClass("choixLogoOpen");
+    $(".choixLogos").addClass("choixLogoClosed");
   
     // cta SUBMIT formulaire
     $('#formSubmit').unbind('click').on('click', function (event)   
@@ -220,6 +229,7 @@ function bindActionsButtons() {
         $("#ajouterFavForm").hide();
         $(".container").addClass('moveContainerTop');
         $(".container").removeClass('moveContainerDown');
+
     });
 
     // cta ICONES d'edition-modification-suppression
@@ -296,8 +306,6 @@ function droppedFavoris(ligne, urlImage,siteName){
 
 
 //------------ INTERACTION CSS ----------------------//
-
-
 $(".bouddha").on("click",function(){
         actionBda();
     });
@@ -326,7 +334,6 @@ function actionBda(){
     }
         var valeurId= localStorage.getItem('valeurId');
         var valeurSecret=localStorage.getItem('valeurSecret');  
-        //console.log(valeurId +" & "+ valeurSecret);
         $("#appId").val(valeurId);
         $("#appSecret").val(valeurSecret);
 }
@@ -347,7 +354,8 @@ function getPictures(query, AppId, AppSecret){
         $('#logo').attr('src',"https://graph.facebook.com/"+pageid+"/picture/?width=80");
     });
 }
-function ajouterPicture(){
+
+function centralPicture(){
     var query = $("#nomSite").val();
     localStorage.setItem("nomSite", query);
     $("#moreImages").addClass("opacity1");
@@ -355,8 +363,8 @@ function ajouterPicture(){
     $('#nomSite').removeClass("infosOn");
     getPictures();
 }
-// Affichage du Logo central quand on quitte le focus du champ nom
-$("#nomSite").focusout(ajouterPicture);
+$("#nomSite").focusout(centralPicture);
+
 // Remplacement du logo central en cliquant sur les vignettes
 $(".choixLogos").click(function(a){
     if(a.target.id.indexOf("page-") != -1)
@@ -373,7 +381,6 @@ $('#urlSiteBis').keyup(function(e) {
     if(e.keyCode == 13) 
     { // KeyCode de la touche entrée
         $('#logo').attr('src',urlBis);
-        $("#urlSiteBis").animate({"left":"5"});
     }
 });
 // ouvrir fermer choix logo : toogleClass
@@ -381,23 +388,26 @@ $("#moreImages").on("click",function(){
     event.preventDefault();
     $("#moreImages").toggleClass("openchoixlogo");
     if($("#moreImages").hasClass("openchoixlogo"))
-    {
+    {  
         $(".choixLogos").addClass("choixLogoOpen");
+        $(".choixLogos").removeClass("choixLogoClosed");
     }else{
         $(".choixLogos").removeClass("choixLogoOpen");
+        $(".choixLogos").addClass("choixLogoClosed");
     }
 });
 // ouvrir fermer set url : toogleClass
 $("#setUrl").on("click",function(){
+    event.preventDefault();
     $("#setUrl").toggleClass("openUrl");
     if($("#setUrl").hasClass("openUrl"))
     {
-        //$("#moreImages").removeClass("openchoixlogo");
-        $(".choixLogos").animate({"left":"5"});
-        $("#moreImages").text("More images");
-        $("#urlSiteBis").animate({"left":"315"});
+        //$("#moreImages").text("More images");
+        $("#urlSiteBis").addClass("choixUrlOpen");
+        $("#urlSiteBis").removeClass("choixUrlClosed");
     }else{
-        $("#urlSiteBis").animate({"left":"5"});             
+        $("#urlSiteBis").removeClass("choixUrlOpen");
+        $("#urlSiteBis").addClass("choixUrlClosed");       
     }
 });
 

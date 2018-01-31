@@ -40,6 +40,17 @@ body {
 	margin:0;
 	padding:0;
 }
+.filtre{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background-color: black;
+	opacity:0;
+	pointer-events: none;
+	z-index: 999;
+}
 .filtreOff{
 	position: absolute;
 	top: 0;
@@ -94,6 +105,14 @@ h1{
     width: 50px;
     height: 80px;
     z-index: 999;
+}
+.moveUp{
+    transform: translate(30px, -20vh);
+    transition: 0.6s;
+}
+.moveDown{
+    transform: translate(0, 0);
+    transition: 0.6s;
 }
 .container{
 	box-sizing: border-box;
@@ -160,6 +179,9 @@ h1{
 	font-size:24px;
 	font-weight: 100;
 }
+.entete h1{
+	pointer-events: none;
+}
 .pave{
 	position: relative;
 	display: block;
@@ -190,7 +212,9 @@ button{
 	width:50px;
 	height:10px;
 	font-size:10px;
-	margin:0 auto;  
+	margin:0 auto; 
+	color:#fff; 
+	text-decoration: none;
 }
 .pave:hover{
 	transform: scale(0.8);
