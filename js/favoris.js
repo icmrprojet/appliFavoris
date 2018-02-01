@@ -30,7 +30,7 @@ function chargerFavoris() {
     var week = day*7;
     var month = day*30;
     var year = day*365;
-	data = pullLocalStorageInto();
+	data = recupLocalStorage();
 
 function generateLine(type, collection, time) {
     var lineTemp = '<div class="ligne" name="' + type + 
@@ -69,6 +69,7 @@ function liaisonOnClicks(){
 
     // CLICK sur AJOUTER
     $(".test").on("click",function(){
+        $('#logo').attr('src','images/b_80x80.png');
         $("#ligneFavName").attr("name",this.name);
         $("#formSubmit")[0].setAttribute("value", "Ajouter");
         $("#ajouterFavForm").toggle();
@@ -85,7 +86,6 @@ function liaisonOnClicks(){
     $('.fav').on('click', function (elem) { 
         var ligne =  this.parentElement.getAttribute("name");
         var index = this.getAttribute("name");
-
 		console.log(ligne, index);
         if($(this).children('.modif.show').length > 0) 
         {
@@ -102,7 +102,9 @@ function liaisonOnClicks(){
                 $(".container").addClass('moveContainerDown');
                 $("#formSubmit")[0].setAttribute("value","Modifier");
                 $("#formSubmit")[0].setAttribute("ligne",ligne);
-                $("#formSubmit")[0].setAttribute("index",index);       
+                $("#formSubmit")[0].setAttribute("index",index); 
+                var urlImage = data[ligne][index].urlImage;
+                $('#logo').attr('src',urlImage);     
             }
             else
             {
@@ -135,7 +137,7 @@ function saveLocalStorage(data){
 }
 
 // CHECK DU LOCAL STORAGE sur la string 'data'
-function pullLocalStorageInto(){
+function recupLocalStorage(){
 	if(!localStorage.getItem('data'))
 	{
         //Si l'entrée liée à la clé 'data' est vide alors renvoi d'une liste de 3 tableaux vides
@@ -174,6 +176,11 @@ function ajouterFavoris() {
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
     //console.log(ligne,index)
+    if (data[ligne]==0){
+        console.log(data[ligne]);
+        $(".test").show();
+    }
+
     data[ligne].splice(index,1);
     saveLocalStorage(data);
     chargerFavoris();
@@ -181,8 +188,7 @@ function supprimerFavoris(ligne, index) {
 
 // MODIFIER FAVORIS
 function modifierFavoris(ligne, index) {
-    var urlImage = $('input[name=urlImage]').val();
-    console.log(urlImage);
+    var urlImage = $('#logo').attr('src');
     var siteName = $('input[name=siteName]').val();
     var siteUrl  = $('input[name=siteUrl]').val();
     data[ligne][index].urlImage=urlImage;
@@ -234,10 +240,10 @@ function bindActionsButtons() {
 
     // cta ICONES d'edition-modification-suppression
     function actionButton(typeButton) {
+
         return function () {
             var currentLine = $(this).data('type');
-            var active = $(this).data("active");
-
+            var active = $(this).data("active");  
             $("#ajouterFavForm").hide();
             $(".container").addClass('moveContainerTop');
             $(".container").removeClass('moveContainerDown');
@@ -345,6 +351,7 @@ function getPictures(query, AppId, AppSecret){
     AppSecret = localStorage.getItem('valeurSecret');
     $.getJSON('https://graph.facebook.com/search?q='+query+'&type=page&access_token='+AppId+'|'+AppSecret+'',function(monJSON){
         var length = monJSON.data.length;
+        $('.choixLogos').html('');
         for(var i=0;i<15;i++){
             var pageid = monJSON.data[i].id;
             $('.choixLogos').append('<img id="page-'+i+'" src="https://graph.facebook.com/'+pageid+'/picture/?width=200">');
