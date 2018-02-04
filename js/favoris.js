@@ -15,6 +15,11 @@ var data2 = {
     monthly: []
     };
 }*/
+// tab[] => tableau => on recupere avec tab[]
+// tab{} => liste => on recupere avec tab.
+
+var action = {valeur: "", ligne : ""};
+var indexCible="";
 //Constructeur pour l'objet Favoris
 function Favoris(urlImage, siteName, siteUrl, lastVisitDate)
 {
@@ -23,7 +28,43 @@ function Favoris(urlImage, siteName, siteUrl, lastVisitDate)
 	this.siteUrl = siteUrl;
 	this.lastVisitDate = lastVisitDate;	
 }
+function generateLine(type, data, time) {
+    // initialisation de la ligne dans lineTemp
+    var lineTemp = '<div class="ligne" name="' + type + '" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>' + type +
+    '</h1><span class="modifIco" data-active="false" data-type="'+ type +'"></span><span class="supprIco" data-active="false" data-type="' + type + '"></span></div>';
+    if(action.valeur == "supprimer" && action.ligne == type){
+        var supprActif = true;}
+    else{
+        var supprActif = false;
+    }
+    if(action.valeur == "modifier" && action.ligne == type){
+        var modifActif = true;}
+    else{
+        var modifActif = false;
+    }
+    // creation des favoris de la ligne
+    data.forEach(function (element, index){
+        lineTemp += printElement(element, time, index, supprActif, modifActif);
+    });   
+    //CREATION DU BUTTON [+] 
+    //visible par defaut uniquement si la ligne est vide     
+    lineTemp += '<button class="test ';
+    if(action.valeur == "modifier" || action.valeur == "supprimer")
+    {
+        lineTemp += "hide";
+    }
+    else
+    {
+        if(data.length == 0)
+        {
+            lineTemp += "forceAffichage";
+        }
+    }
 
+    lineTemp +=' pave" name="' + type + '">+</button></div>'; 
+    return lineTemp;
+
+};
 // UPDATE DU DOM
 function chargerFavoris() {
     var day=1000*60*60*24;
@@ -31,18 +72,6 @@ function chargerFavoris() {
     var month = day*30;
     var year = day*365;
 	data = recupLocalStorage();
-
-function generateLine(type, collection, time) {
-    var lineTemp = '<div class="ligne" name="' + type + 
-    '" ondrop="drop(event)" ondragover="allowDrop(event)"><div class="entete"><h1>' + type +
-    '</h1><span class="modifIco" data-active="false" data-type="'+ type +'"></span><span class="supprIco" data-active="false" data-type="' + type + '"></span></div>';
-    collection.forEach(function (element, index) {
-        lineTemp += printElement(element, time, index);
-    });
-    lineTemp += '<button class="test pave" name="' + type + '">+</button></div>'; 
-    return lineTemp;
-
-    }
     var lignesFavoris = generateLine('daily', data.daily, day);
     lignesFavoris += generateLine('weekly', data.weekly, week);
     lignesFavoris += generateLine('monthly', data.monthly, month);
@@ -53,14 +82,23 @@ function generateLine(type, collection, time) {
     bindActionsButtons();
 }
 
-function printElement(element, date, order) {
+function printElement(element, date, order, supprActif, modifActif) {
     var favoris ='<div class="pave fav ';
     if((Date.now()-element.lastVisitDate-date)<0)
     {
         favoris += 'coche';
     }
-    var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
-    return favoris += '" ondragstart="drag(event)" draggable="true" name='+(order)+'><span class="modif"></span><span class="suppr"></span><a target="_blank" href="' + element.siteUrl + '"><span style="background-image:url('+element.urlImage+')"></span><span> ' + element.siteName + '</span></a></div>';
+    //var testImg = "https://www.google.fr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"; // => remplace element.urlImage
+    favoris += '" ondragstart="drag(event)" draggable="true" ondragenter="deplacementItem(event)" ondragleave="getBack(event)" name='+(order)+'><span class="modif';
+    if(modifActif){
+        favoris+=" showFront";
+    }
+    favoris += '"></span><span class="suppr';
+    if(supprActif){
+        favoris+=" showFront";
+    }
+    favoris +='"></span><a target="_blank" href="' + element.siteUrl + '"><span style="background-image:url('+element.urlImage+')"></span><span> ' + element.siteName + '</span></a></div>';
+    return favoris; // permet de recupérer le favoris en dehors de la fonction printElement
 }
 
 // ON CLICK
@@ -75,11 +113,12 @@ function liaisonOnClicks(){
         $("#ajouterFavForm").toggle();
         $(".container").toggleClass('moveContainerTop');
         $(".container").toggleClass('moveContainerDown');
+        $(".filtre").addClass("filtreOn");
+        $(".filtre").removeClass("filtreOff");
         // vider les champs du formulaire
         $('input[name=urlImage]').val("");
         $('input[name=siteName]').val("");
         $('input[name=siteUrl]').val("");
-        disactiveAllButtons();
     })
 
     // CLICK sur un FAVORIS
@@ -87,7 +126,7 @@ function liaisonOnClicks(){
         var ligne =  this.parentElement.getAttribute("name");
         var index = this.getAttribute("name");
 		console.log(ligne, index);
-        if($(this).children('.modif.show').length > 0) 
+        if($(this).children('.modif.showFront').length > 0) 
         {
 
             if(!$("#ajouterFavForm").is(':visible')) // si menu n'est pas visible
@@ -98,6 +137,8 @@ function liaisonOnClicks(){
                 //var urlPict=data[ligne][index].urlImage;
                 //$('#logo').attr('src',urlPict);
                 $("#ajouterFavForm").show();
+                $(".filtre").addClass("filtreOn");
+                $(".filtre").removeClass("filtreOff");
                 $(".container").removeClass('moveContainerTop');
                 $(".container").addClass('moveContainerDown');
                 $("#formSubmit")[0].setAttribute("value","Modifier");
@@ -115,19 +156,17 @@ function liaisonOnClicks(){
 
             }
         }
-        else if($(this).children('.suppr.show').length > 0)
+        else if($(this).children('.suppr.showFront').length > 0)
         {
             supprimerFavoris(ligne,index); 
             console.log(index);
         }
         else
         {
-            data[ligne][index].lastVisitDate=Date.now();
-            $('.supprButton').css("display", "block");  
-            saveLocalStorage(data);
-			chargerFavoris();
+        data[ligne][index].lastVisitDate=Date.now(); 
+        saveLocalStorage(data);
+		chargerFavoris();
         }
-        disactiveAllButtons();
     });
 }
 
@@ -141,7 +180,7 @@ function recupLocalStorage(){
 	if(!localStorage.getItem('data'))
 	{
         //Si l'entrée liée à la clé 'data' est vide alors renvoi d'une liste de 3 tableaux vides
-		return  {daily: [],weekly: [],monthly: [],yearly: [],};
+		return  {daily: [],weekly: [],monthly: [],yearly: []};
 	}
 	else
         //Si l'entrée liée à la clé 'data' est pleine alors renvoi d'une liste de 3 tableaux pleins du LS
@@ -176,11 +215,6 @@ function ajouterFavoris() {
 // SUPPRIMER FAVORIS
 function supprimerFavoris(ligne, index) {
     //console.log(ligne,index)
-    if (data[ligne]==0){
-        console.log(data[ligne]);
-        $(".test").show();
-    }
-
     data[ligne].splice(index,1);
     saveLocalStorage(data);
     chargerFavoris();
@@ -195,17 +229,9 @@ function modifierFavoris(ligne, index) {
     data[ligne][index].siteName=siteName;
     data[ligne][index].siteUrl=siteUrl;
     saveLocalStorage(data);
+    action.valeur = "";
+    action.ligne = "";
     chargerFavoris();
-}
-
-function disactiveAllButtons() {
-        function disactivate() {
-             $(this).data('active', false);
-        }
-        $(".modifIco").each(disactivate); // Passer la function en paramètre
-        $(".supprIco").each(disactivate); 
-        $('span.modif').removeClass("show");
-        $('span.suppr').removeClass("show");
 }
 
 
@@ -217,9 +243,75 @@ function bindActionsButtons() {
     $("#urlSiteBis").addClass("choixUrlClosed");
     $(".choixLogos").removeClass("choixLogoOpen");
     $(".choixLogos").addClass("choixLogoClosed");
-  
+
+    // cta ICONES d'edition-modification-suppression
+    function actionButton(typeButton) {
+
+        return function () {
+            var currentLine = $(this).data('type');
+            var active = $(this).data("active");  
+            $("#ajouterFavForm").hide();
+            $(".container").addClass('moveContainerTop');
+            $(".container").removeClass('moveContainerDown');
+            console.log(action);
+            var ligne = $(this)[0].getAttribute("data-type");
+            if(typeButton == "suppr")
+            {
+                $(".test").addClass('hide');
+                if(action.valeur == "supprimer")
+                {
+                    if(action.ligne == ligne)
+                    {
+                       action.ligne = ""; 
+                       action.valeur = "";
+                    }
+                    else
+                    {
+                        action.ligne = ligne;
+                    }                        
+                }
+                else
+                {
+                    action.valeur = "supprimer";
+                    action.ligne = ligne;                        
+                }
+            }
+            else
+            {
+                if(action.valeur == "modifier")
+                {
+                    $(".test").addClass('hide');                        
+                    if(action.ligne == ligne)
+                    {
+                       action.ligne = ""; 
+                       action.valeur = "";
+                    }
+                    else
+                    {
+                        action.ligne = ligne;
+                    }                        
+                }
+                else
+                {
+                    action.valeur = "modifier";
+                    action.ligne = ligne;                        
+                }                    
+            }
+            chargerFavoris();
+        }
+    }
+    // cta MODIFIER
+    $(".modifIco").on('click', actionButton('modif'));
+
+    // cta SUPPRIMER
+    $('.supprIco').on('click', actionButton('suppr'));
+}
+
+
+
+$(document).ready(function(){
     // cta SUBMIT formulaire
-    $('#formSubmit').unbind('click').on('click', function (event)   
+    $('#formSubmit').on('click', function (event)   
     {
         event.preventDefault();
         var action = $("#formSubmit")[0].getAttribute("value");
@@ -235,76 +327,14 @@ function bindActionsButtons() {
         $("#ajouterFavForm").hide();
         $(".container").addClass('moveContainerTop');
         $(".container").removeClass('moveContainerDown');
+        $(".filtre").removeClass("filtreOn");
+        $(".filtre").addClass("filtreOff");
 
     });
-
-    // cta ICONES d'edition-modification-suppression
-    function actionButton(typeButton) {
-
-        return function () {
-            var currentLine = $(this).data('type');
-            var active = $(this).data("active");  
-            $("#ajouterFavForm").hide();
-            $(".container").addClass('moveContainerTop');
-            $(".container").removeClass('moveContainerDown');
-            disactiveAllButtons();
-
-            if (!active) {
-                $(this).data('active', true);
-                $('div[name='+currentLine+'] span.' + typeButton).addClass("show");
-            }
-        }
-    }
-    // cta MODIFIER
-    $(".modifIco").unbind('click').on('click', actionButton('modif'));
-
-    // cta SUPPRIMER
-    $('.supprIco').unbind('click').on('click', actionButton('suppr'));
-
-}
+    chargerFavoris();
+});// fin document ready
 
 
-
-$(document).ready(chargerFavoris);// fin document ready
-
-
-
-
-
-//DRAG AND DROP ***********************************************
-function drop(ev) {
-    ev.preventDefault();
-    var urlImage = ev.dataTransfer.getData("urlImage");
-    var siteName = ev.dataTransfer.getData("siteName");
-    var index = ev.dataTransfer.getData("index");
-    var ligneSrc = ev.dataTransfer.getData("ligneSrc");
-    if(ev.target.className == "ligne")
-    {
-        var ligne = ev.target.getAttribute("name");
-        droppedFavoris(ligne, urlImage, siteName);
-        supprimerFavoris(ligneSrc, index-1);        
-    }
-}
-
-function allowDrop(ev) {
-    ev.preventDefault();
-    console.log("dropped");
-}
-
-function drag(ev) {
-    ev.dataTransfer.setData("urlImage", ev.target.getElementsByTagName("img")[0].attributes.src.nodeValue);
-    ev.dataTransfer.setData("siteName", ev.target.getElementsByTagName("span")[1].innerHTML);
-    ev.dataTransfer.setData("index", ev.target.getAttribute("name"));
-    ev.dataTransfer.setData("ligneSrc", ev.target.parentElement.getAttribute("name"));
-    //ev.dataTransfer.setData("siteUrl", ev.target.getElementsByTagName("a")[0].attributes.src.nodeValue);
-}
-
-function droppedFavoris(ligne, urlImage,siteName){
-    var newFavoris = new Favoris(urlImage,siteName,"",0); // 
-    data[ligne].push(newFavoris); // push du nouveau favori dans le tableau ligne
-    saveLocalStorage(data);
-    chargerFavoris();   
-}
 
 
 
@@ -343,6 +373,14 @@ function actionBda(){
         $("#appId").val(valeurId);
         $("#appSecret").val(valeurSecret);
 }
+
+$(".close").on("click",function(){
+    $("#ajouterFavForm").hide();
+    $(".container").addClass('moveContainerTop');
+    $(".container").removeClass('moveContainerDown');
+    $(".filtre").removeClass("filtreOn");
+    $(".filtre").addClass("filtreOff");
+});
 
 // RECUPERATION DES LOGOS VIA L'API faceBook + Affichage
 function getPictures(query, AppId, AppSecret){
@@ -417,6 +455,76 @@ $("#setUrl").on("click",function(){
         $("#urlSiteBis").addClass("choixUrlClosed");       
     }
 });
+
+
+
+
+//DRAG AND DROP ***********************************************
+// quand on clique et deplace un item
+function drag(ev) {
+    ev.dataTransfer.setData("ligne", ev.target.parentElement.getAttribute("name")); // on stocke la ligne de l'item déplacé
+    ev.dataTransfer.setData("index", ev.target.getAttribute("name"));               // on stocke l'index de l'item déplacé
+    $(".test").hide();                                                              // on cache les boutons d'ajouts tant qu'on drag
+}
+// quand on passe en drag sur un element, on stocke son index dans la variable globale "indexCible", et on pousse l'element.
+function deplacementItem(ev){
+    ev.target.parentElement.parentElement.style.borderLeft  = "10px solid transparent";
+    indexCible = ev.target.parentElement.parentElement.getAttribute("name");
+}
+// on replace l'element quand on sort de son espace avec le drag
+function getBack(ev){
+    ev.target.parentElement.parentElement.style.borderLeft  = "0px solid transparent";
+}
+// quand on dépose un item
+function drop(ev) {
+    ev.preventDefault();    
+    var indexSource = ev.dataTransfer.getData("index");     // on récupère les données du drag
+    var ligneSource = ev.dataTransfer.getData("ligne");
+
+
+    if(ev.target.className == "ligne")                      // quand on drop sur une ligne
+    {
+        var ligne = ev.target.getAttribute("name");         // on récupère la ligne 
+        if(ligne && ligne != null )
+        {
+            droppedFavoris(ligneSource, indexSource, ligne,"");     // on depose l'item
+            supprimerFavoris(ligneSource, indexSource);             // on supprime l'item initial
+        }        
+    }
+    else
+    {
+        var ligne = ev.target.parentElement.parentElement.parentElement.getAttribute("name"); // on récupère la ligne en étant sur un pavé, donc on remonte avec parentElement
+                if(ligne && ligne != null )
+        {
+
+            droppedFavoris(ligneSource, indexSource, ligne,indexCible);     // on dépose l'item 
+            
+        }
+    }
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+
+
+function droppedFavoris(ligneSource, indexSource, ligne, indexCible){  
+    console.log(ligne);
+    var newFavoris = new Favoris(data[ligneSource][indexSource].urlImage,data[ligneSource][indexSource].siteName,"",0); // on recréé le favoris déplacé depuis le localstorage avec la ligne et l'index sources
+    if(indexCible != "")
+    {
+        data[ligneSource].splice(indexSource,1);                // on supprime un element a la position de l'indexSource
+        data[ligne].splice(indexCible, 0,newFavoris);           // on supprime ZERO element a la position de l'indexCible, et on y rajoute newFavoris
+    }
+    else
+    {
+        data[ligne].push(newFavoris); // push du nouveau favori a la fin du tableau ligne  
+    }
+    saveLocalStorage(data);
+    chargerFavoris();      
+}
+
 
 
 
