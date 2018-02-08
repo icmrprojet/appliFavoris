@@ -94,20 +94,28 @@
     content:"↓";
     transition: all 0.5s;
 }
-
 .cta:hover::before{
     top:0;
     left:-40px;
     content:"↓";
 }
-.cta.openbox::before {
-    top:0;
-    left:-40px;
-    content:"↓";
+.cta:nth-of-type(3):hover::before{
+    transition: all 0.5s;
+    transform: rotate(-90deg);
+}
+.cta:nth-of-type(3):hover::after{
+    transition: all 0.5s;
+    transform: rotate(90deg);
 }
 .cta:hover::after{
     top:0;
     left:40px;
+    content:"↓";
+}
+
+.cta.openbox::before {
+    top:0;
+    left:-40px;
     content:"↓";
 }
 .cta.openbox::after {
@@ -162,13 +170,13 @@
     border-radius:0 0 5px 5px;
     padding:15px 20px;
 }
-#boxThemes ul{
+#panelThemes ul{
     box-sizing: border-box;
     text-align:center;
     margin:0;padding:0;
 
 }
-#boxThemes ul li{
+#panelThemes ul li{
     display: inline-block;
     width:10px;
     height:10px;
@@ -306,7 +314,7 @@ input{
 .choixLogos{
     position: absolute;
     top:30px;
-    left:-1000px;
+    left:30px;
     width: 280px;
     height:280px;
     box-sizing: border-box;
@@ -316,17 +324,18 @@ input{
     border-radius:6px;
     opacity:0;
 }
-.choixLogoOpen{
+.logosOpened{
     transition: 1s;
     opacity:1;
     top:30px;
     left:340px;
 }
-.choixLogoClosed{
+.logosClosed{
+    pointer-events: none;
     transition: .5s;
     opacity:0;
     top:30px;
-    left:-1000px;
+    left:30px;
 }
 #urlSiteBis{
     position: absolute;
@@ -341,12 +350,12 @@ input{
     font-size: 12px;
     opacity:0;
 }
-.choixUrlOpen{
+.urlOpened{
     transition: 1s;
     opacity:1!important;
     left:340px!important;
 }
-.choixUrlClosed{
+.urlClosed{
     transition:.5s;
     opacity:0!important;
     left:30px!important;

@@ -60,11 +60,10 @@ body {
 	background-color: black;
 	opacity:0;
 	pointer-events: none;
-	z-index: 999;
 }
 .filtreOn{
 	pointer-events: auto;
-	opacity:0.7;
+	opacity:0.5;
 	transition: 1s;
 }
 .general {
@@ -78,6 +77,9 @@ h1{
     line-height:40px;
     font-weight:100;
     margin:0;padding:0;
+}
+a{
+	text-decoration: none;
 }
 .hide{
     display:none!important;
@@ -147,7 +149,7 @@ h1{
 	top:0;
     left:0;
 	width: 70%;
-	margin-top:20vh;
+	margin-top:15vh;
 	box-sizing: border-box;
 	display:block;
 	/*background: orange;*/
@@ -173,7 +175,7 @@ h1{
 	box-sizing: border-box;
 	float:left;
 	width:100px;
-	height:60px;
+	height:100%;
 	margin:10px 5px;
 	text-align: center;
 	padding:0px;
@@ -197,12 +199,13 @@ h1{
 	width:65px;
 	height:65px;
 	border-radius: 5px;
-	background: rgba(255,255,255,.2);
+	background: rgba(255,255,255,.3);
 	text-align: center;
 	padding:0px;
 	background-position: center center;
 	background-size:contain;
 	background-repeat:no-repeat;
+	text-decoration: none;
 }
 button{
 	outline: none;
@@ -211,6 +214,7 @@ button{
 	background-image: none;
 }
 .pave span:nth-of-type(2){
+	display:block;
 	width:50px;
 	height:10px;
 	font-size:10px;
@@ -303,7 +307,7 @@ button{
 	float:left;
 	box-sizing: border-box;
 	border-radius: 0;
-	background:#1a73b9;
+	background:rgba(0,0,0,.3);
 	margin:0;
 	padding:10px;
 	width:100%;
@@ -319,7 +323,7 @@ button{
 	transform: translate(-40px, 10px);
     transition: 0.6s;
 }
-.pave.coche:after{
+.coche:before{
 	content:"";
 	position: absolute;
 	display: block;
@@ -329,6 +333,19 @@ button{
 	height:65px;
 	background-size:100%;
 	background-repeat:no-repeat;
+	pointer-events: none;
+}
+.alert:before{
+	content:"";
+	position: absolute;
+	display: block;
+	top:0;left:0;
+	background-image: url(../images/white-alert_160.png);
+	width:65px;
+	height:65px;
+	background-size:100%;
+	background-repeat:no-repeat;
+	pointer-events: none;
 }
 .pave span.modif{
 	position: absolute;
@@ -339,7 +356,7 @@ button{
 	height:65px;
 	background-size:100%;
 	background-repeat:no-repeat;
-	z-index: 999;
+	z-index: 99;
 }
 .pave span.suppr{
 	position: absolute;
@@ -350,7 +367,7 @@ button{
 	height:65px;
 	background-size:100%;
 	background-repeat:no-repeat;
-	z-index: 999;
+	z-index: 99;
 }
 .test{
 	display:none;
@@ -364,4 +381,8 @@ button{
 }
 .choixLogo{
 	left:300px;
+}
+#import:hover{
+	color:red !important;
+	font-style: bold!important;
 }
